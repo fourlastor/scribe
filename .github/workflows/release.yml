@@ -1,0 +1,80 @@
+name: Release
+
+# Pushing a tag such as v1.2.3 builds the signed APK and publishes it as a GitHub release.
+# The tag has to point at a commit that is on main.
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Full history, to tell whether the tagged commit is on main.
+          fetch-depth: 0
+
+      - name: Check that the tag is on main
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::$GITHUB_REF_NAME does not point at a commit on main."
+            exit 1
+          fi
+
+      - name: Read the version from the tag
+        id: version
+        run: |
+          name="${GITHUB_REF_NAME#v}"
+          IFS=. read -r major minor patch <<< "$name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          # 1.2.3 becomes 1002003, which grows with every release as Android requires.
+          echo "code=$((major * 1000000 + minor * 1000 + patch))" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Restore the signing key
+        env:
+          SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
+        run: |
+          if [ -z "$SIGNING_KEYSTORE" ]; then
+            echo "::error::The SIGNING_KEYSTORE secret is not set."
+            exit 1
+          fi
+          printf '%s' "$SIGNING_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/release.jks"
+
+      # Gradle downloads the speech model here, see the catalogue in app/build.gradle.kts.
+      - name: Build
+        env:
+          SCRIBE_KEYSTORE: ${{ runner.temp }}/release.jks
+          SCRIBE_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SCRIBE_KEY_ALIAS: scribe
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+        run: >
+          ./gradlew :app:testDebugUnitTest :app:assembleRelease
+          "-Pscribe.versionName=$VERSION_NAME"
+          "-Pscribe.versionCode=$VERSION_CODE"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+        run: |
+          apk="scribe-$VERSION_NAME.apk"
+          mv app/build/outputs/apk/release/app-release.apk "$apk"
+          gh release create "$GITHUB_REF_NAME" "$apk" \
+            --verify-tag \
+            --title "Scribe $VERSION_NAME" \
+            --generate-notes \
+            --notes "Speech recognition by NVIDIA Parakeet TDT 0.6b v3 (CC BY 4.0), run on the device with sherpa-onnx."
