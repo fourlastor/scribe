@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Transcripts never leave the device for a cloud backup. Moving to a new phone still carries them over. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="database" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="sharedpref" path="." />
+    </cloud-backup>
+</data-extraction-rules>

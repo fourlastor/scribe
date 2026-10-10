@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Scribe" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- A see-through window with no animation of its own: the only thing that moves is the sheet. -->
+    <style name="Theme.Scribe.Overlay" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+</resources>

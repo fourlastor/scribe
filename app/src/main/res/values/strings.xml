@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Scribe</string>
+    <string name="share_target">Transcribe</string>
+
+    <string name="transcript_title">Transcript</string>
+    <string name="transcript_loading_model">Loading speech model…</string>
+    <string name="transcript_transcribing">Transcribing…</string>
+    <string name="transcript_no_speech">No speech found in this recording.</string>
+    <string name="transcript_no_words">No words could be made out. The language spoken may not be one this model supports.</string>
+    <string name="transcript_failed">This audio could not be read.</string>
+    <string name="transcript_progress">Transcription progress</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_back">Back</string>
+    <string name="clipboard_label">Transcript</string>
+
+    <string name="language_title">Language</string>
+    <string name="language_automatic_short">Automatic</string>
+    <string name="language_change">Change language</string>
+    <string name="language_detected">Detected automatically</string>
+    <string name="language_automatic">Detect automatically</string>
+    <string name="language_search">Search languages</string>
+    <string name="language_suggested">Suggested</string>
+    <string name="language_all">All languages</string>
+    <string name="language_none_found">No language matches “%1$s”.</string>
+    <string name="language_selected">Selected</string>
+
+    <string name="history_empty_title">No transcripts yet</string>
+    <string name="history_empty_body">Share a voice message from any chat app and pick Scribe. The transcript shows up right there, and is kept here.</string>
+    <string name="history_open_audio">Open audio</string>
+    <string name="history_deleted">Transcript deleted</string>
+    <string name="history_undo">Undo</string>
+</resources>

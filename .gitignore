@@ -1,0 +1,14 @@
+.gradle/
+.kotlin/
+build/
+local.properties
+
+.idea/
+*.iml
+
+# Speech models are downloaded by Gradle at build time, see app/build.gradle.kts.
+*.onnx
+
+# Signing keys never belong in the repository. CI gets the release key from a secret.
+*.jks
+*.keystore

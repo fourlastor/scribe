@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- No permissions: transcription runs on the device, and shared audio arrives with its own read grant. -->
+
+    <application
+        android:name=".ScribeApp"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Scribe">
+
+        <activity
+            android:name=".ui.history.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            Opens on top of the app the audio was shared from, showing only a bottom sheet. Some
+            apps start their share target in a new task: the empty affinity keeps that task apart
+            from the launcher entry's, and it stays out of recents since it is only an overlay.
+        -->
+        <activity
+            android:name=".ui.share.ShareActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/share_target"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Scribe.Overlay">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
